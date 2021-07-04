@@ -11,3 +11,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.err {
+  color: rgba(255, 0, 0, 0.541);
+  font-weight: bold;
+  text-align: center;
+}
+
+.no-data {
+  text-align: center;
+  font-weight: bold;
+  color: grey;
+}

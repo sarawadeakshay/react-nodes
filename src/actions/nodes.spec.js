@@ -63,4 +63,74 @@ describe("Actions", () => {
 
     expect(dispatch.mock.calls.flat()).toEqual(expected);
   });
+
+  // FETCH BLOCKS
+  it("should fetch the blocks", async () => {
+    const blocks = {
+      data: [{
+        "id": "5",
+        "type": "blocks",
+        "attributes": {
+          "data": "The Human Torch",
+        }
+      }, {
+        "id": "6",
+        "type": "blocks",
+        "attributes": {
+          "data": "is denied",
+        }
+      }, {
+        "id": "7",
+        "type": "blocks",
+        "attributes": {
+          "data": "a bank loan",
+        }
+      }]
+  };
+    
+    mockFetch.mockReturnValueOnce(
+      Promise.resolve({
+        status: 200,
+        json() {
+          return Promise.resolve({ blocks: blocks });
+        },
+      })
+    );
+    await ActionCreators.fetchBlocksData(node)(dispatch);
+    const expected = [
+      {
+        type: ActionTypes.FETCH_BLOCKS_STATUS_START,
+        node,
+      },
+      {
+        type: ActionTypes.FETCH_BLOCKS_STATUS_SUCCESS,
+        node,
+        res: {blocks},
+      },
+    ];
+
+    expect(dispatch.mock.calls.flat()).toEqual(expected);
+  });
+
+  it("should fail to fetch the blocks", async () => {
+    mockFetch.mockReturnValueOnce(
+      Promise.resolve({
+        status: 400,
+      })
+    );
+    await ActionCreators.fetchBlocksData(node)(dispatch);
+    const expected = [
+      {
+        type: ActionTypes.FETCH_BLOCKS_STATUS_START,
+        node,
+      },
+      {
+        type: ActionTypes.FETCH_BLOCKS_STATUS_FAILURE,
+        node,
+      },
+    ];
+
+    expect(dispatch.mock.calls.flat()).toEqual(expected);
+  });
+
 });

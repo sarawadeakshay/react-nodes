@@ -11,6 +11,7 @@ import {
 } from "@material-ui/core";
 import colors from "../constants/colors";
 import Status from "./Status";
+import Block from "./Block";
 
 const Node = ({ node, expanded, toggleNodeExpanded }) => {
   const classes = useStyles();
@@ -45,8 +46,18 @@ const Node = ({ node, expanded, toggleNodeExpanded }) => {
           <Status loading={node.loading} online={node.online} />
         </Box>
       </AccordionSummary>
-      <AccordionDetails>
-        <Typography>Blocks go here</Typography>
+      <AccordionDetails className={classes.accDetails}>
+        {/* <Typography>Blocks go here</Typography> */}
+        {node.showBlocksError && <div className="err">Error while fetching! Please try again after later!</div>}
+        {node.showBlocksLoading && <Status loading={true} />}
+        {node.blocks.map(block => {
+          return <Block block={block} key={+block.id} />;
+        })}
+        {node.blocks.length === 0
+          && !node.showBlocksLoading
+          && !node.showBlocksError
+          && <div className="no-data">No Blocks Found!</div>}
+        
       </AccordionDetails>
     </Accordion>
   );
@@ -96,6 +107,10 @@ const useStyles = makeStyles((theme) => ({
     color: colors.faded,
     lineHeight: 2,
   },
+  accDetails: {
+    display: "block",
+    paddingTop: 0
+  }
 }));
 
 Node.propTypes = {
@@ -104,6 +119,9 @@ Node.propTypes = {
     online: PropTypes.bool,
     name: PropTypes.string,
     loading: PropTypes.bool,
+    blocks: PropTypes.array,
+    // showBlocksError: PropTypes.bool,
+    showBlocksLoading: PropTypes.bool,
   }).isRequired,
   expanded: PropTypes.bool,
   toggleNodeExpanded: PropTypes.func.isRequired,

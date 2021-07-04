@@ -50,3 +50,46 @@ export function checkNodeStatuses(list) {
     });
   };
 }
+
+
+// FETCH BLOCKS
+const fetchBlocksStatusStart = (node) => {
+  return {
+    type: types.FETCH_BLOCKS_STATUS_START,
+    node,
+  };
+};
+
+const fetchBlocksStatusSuccess = (node, res) => {
+  return {
+    type: types.FETCH_BLOCKS_STATUS_SUCCESS,
+    node,
+    res,
+  };
+};
+
+const fetchBlocksStatusFailure = (node) => {
+  return {
+    type: types.FETCH_BLOCKS_STATUS_FAILURE,
+    node,
+  };
+};
+
+export function fetchBlocksData(node) {
+  return async (dispatch) => {
+    try {
+      dispatch(fetchBlocksStatusStart(node));
+      const res = await fetch(`${node.url}/api/v1/blocks`);
+
+      if (res.status >= 400) {
+        dispatch(fetchBlocksStatusFailure(node));
+        return;
+      }
+
+      const json = await res.json();
+      dispatch(fetchBlocksStatusSuccess(node, json));
+    } catch (err) {
+      dispatch(fetchBlocksStatusFailure(node));
+    }
+  };
+}

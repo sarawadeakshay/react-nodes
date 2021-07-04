@@ -92,4 +92,90 @@ describe('Reducers::Nodes', () => {
 
     expect(reducer(appState, action)).toEqual(expected);
   });
+
+  // FETCH BLOCKS
+  it('should handle FETCH_BLOCKS_STATUS_START', () => {
+    const appState = {
+      list: [nodeA, nodeB]
+    };
+    const action = { type: ActionTypes.FETCH_BLOCKS_STATUS_START, node: nodeA };
+    const expected = {
+      list: [
+        {
+          ...nodeA,
+          showBlocksLoading: true,
+          showBlocksError: false
+        },
+        nodeB
+      ]
+    };
+
+    expect(reducer(appState, action)).toEqual(expected);
+  });
+
+  it('should handle FETCH_BLOCKS_STATUS_SUCCESS', () => {
+    const blocks = {
+      data: [{
+        "id": "5",
+        "type": "blocks",
+        "attributes": {
+          "data": "The Human Torch",
+        }
+      }, {
+        "id": "6",
+        "type": "blocks",
+        "attributes": {
+          "data": "is denied",
+        }
+      }, {
+        "id": "7",
+        "type": "blocks",
+        "attributes": {
+          "data": "a bank loan",
+        }
+      }]
+    };
+    const appState = {
+      list: [nodeA, nodeB]
+    };
+
+    const action = { type: ActionTypes.FETCH_BLOCKS_STATUS_SUCCESS, node: nodeA, res: blocks };
+    const expected = {
+      list: [
+        {
+          ...nodeA,
+          blocks: blocks.data,
+          showBlocksLoading: false,
+          showBlocksError: false
+        },
+        nodeB
+      ]
+    };
+
+    expect(reducer(appState, action)).toEqual(expected);
+  });
+
+  it('should handle FETCH_BLOCKS_STATUS_FAILURE', () => {
+    const appState = {
+      list: [
+        {
+          ...nodeA
+        },
+        nodeB
+      ]
+    };
+    const action = { type: ActionTypes.FETCH_BLOCKS_STATUS_FAILURE, node: nodeA };
+    const expected = {
+      list: [
+        {
+          ...nodeA,
+          showBlocksLoading: false,
+          showBlocksError: true
+        },
+        nodeB
+      ]
+    };
+
+    expect(reducer(appState, action)).toEqual(expected);
+  });
 });
